@@ -1,0 +1,20 @@
+[package]
+name = "server"
+version = "0.1.0"
+authors = ["Devin Gunay <devingunay@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# TODO: might not need serde if we have Rocket
+serde = { version = "1.0", features = ["derive"] }
+rocket = "0.4"
+rocket_contrib = "0.4"
+anyhow = "1.0"
+rand = "0.7"
+derive_more = "0.99"
+
+[dev-dependencies]
+ureq = { version = "1.5", features = ["json"] }
+serde_json = "1.0"

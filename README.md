@@ -44,9 +44,8 @@ request (so that you can log in and read old messages).
 
 ### Message Queue
 
-To decouple sending vs receiving a message, a message queue should be use. This
-will help avoid problems during high load (messages getting dropped) and also
-enable 
+To decouple sending vs receiving a message, a message queue should be used. This
+will help avoid problems during high load (messages getting dropped).
 
 ### Communication
 

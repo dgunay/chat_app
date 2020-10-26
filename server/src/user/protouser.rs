@@ -10,5 +10,5 @@ pub struct ProtoUser {
 
 // #[derive(Debug)]
 // pub enum Error {
-//     UserIdAlreadyExists(Id),
+//     UserUserIdAlreadyExists(UserId),
 // }

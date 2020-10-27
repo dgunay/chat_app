@@ -22,5 +22,5 @@ pub struct Conversation {
     messages: Vec<Message>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(DieselNewType, Serialize, Deserialize, Debug)]
 pub struct ConversationId(String);

@@ -3,6 +3,8 @@
 use rocket::State;
 use rocket_contrib::json::Json;
 
+use anyhow::Result;
+
 use crate::{message::Message, store::Error, user::ProtoUser};
 
 use super::store::Store;
@@ -17,7 +19,7 @@ pub fn get_user(store: State<'_, Store>, id: UserId) -> Option<Json<User>> {
 }
 
 #[post("/users/new", format = "json", data = "<proto_user>")]
-pub fn new_user(store: State<Store>, proto_user: Json<ProtoUser>) -> Result<Json<User>, Error> {
+pub fn new_user<'a>(store: State<'a, Store>, proto_user: Json<ProtoUser>) -> Result<Json<User>> {
     Ok(Json(store.inner().new_user(proto_user.0)?))
 }
 

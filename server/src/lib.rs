@@ -1,31 +1,37 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+use rocket::error::LaunchError;
+
 #[macro_use]
 extern crate rocket;
-mod message;
-pub mod routes;
-mod store;
-pub mod user;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_derive_newtype;
+
+pub mod schema;
+// pub mod models;
 
 pub mod conversation;
-
-// TODO: remove anyhow if we don't use it
-// use anyhow::Result;
+mod message;
+pub mod routes;
+pub mod store;
+pub mod user;
 
 pub struct Server {
     pub rocket: rocket::Rocket,
 }
 
 impl Server {
-    pub fn new(db_url: &str) -> Self {
+    pub fn new(storage: store::Store) -> Self {
         Self {
             rocket: rocket::ignite()
                 .mount("/", routes![routes::get_user, routes::new_user])
-                .manage(store::Store::new(db_url)),
+                .manage(storage),
         }
     }
 
-    pub fn run(self) {
-        self.rocket.launch();
+    pub fn run(self) -> LaunchError {
+        self.rocket.launch()
     }
 }

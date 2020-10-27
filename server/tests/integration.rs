@@ -1,24 +1,47 @@
-// #[macro_use]
-// extern crate rocket;
+#[macro_use]
+extern crate diesel;
 
-use server::user::User;
-use server::Server;
-
+use diesel::prelude::*;
 use rocket::{http::ContentType, http::Status, local::Client, local::LocalResponse};
+use server::user::User;
+use server::{store::Store, Server};
+
+// Run a local docker container on this machine with the test db in a blank
+// state
+const DB_URL: &str = "postgres://postgres:test@localhost:5432/postgres";
+
+// FIXME: make the tests actually work
+
+fn fixture_setup() -> Server {
+    // Attain connection to db
+    let connection = PgConnection::establish(DB_URL).unwrap();
+
+    // Run the appropriate migrations to create our tables
+    let migration = diesel_migrations::migration_from("../migrations/".into()).unwrap();
+    migration.run(&connection).unwrap();
+
+    // Assemble our Server
+    let store = Store::new(connection);
+    Server::new(store)
+}
 
 #[test]
 fn user_not_found() {
-    let rocket = Server::new().rocket;
+    let fixture_server = fixture_setup();
+    let rocket = fixture_server.rocket;
     let client = Client::new(rocket).expect("Valid rocket instance");
 
     // Get a bogus user and see if it 404's
     let response = client.get("/users/id/12345").dispatch();
     assert_eq!(response.status(), Status::NotFound);
+
+    // TODO: teardown the db
 }
 
 #[test]
 fn add_user() {
-    let rocket = Server::new().rocket;
+    let fixture_server = fixture_setup();
+    let rocket = fixture_server.rocket;
     let client = Client::new(rocket).expect("Valid rocket instance");
 
     // Create a new user on the server
